@@ -1,0 +1,18 @@
+{
+  "name": "online-shopping-cart-redis-mongodb-monetdb",
+  "version": "2.0.0",
+  "description": "Online shopping cart using Redis, MongoDB, MonetDB analytics and Neo4j recommendations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "redis": "^4.7.0",
+    "mongodb": "^6.12.0",
+    "monetdb": "^2.2.0",
+    "neo4j-driver": "^5.28.1",
+    "dotenv": "^16.4.7"
+  }
+}

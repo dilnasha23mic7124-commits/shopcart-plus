@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Hub • ShopCart</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar customer-topbar"><a class="brand" href="/">Shop<span>Cart</span></a><div class="customer-page-title">Customer Hub <span>MongoDB customer directory</span></div><a class="nav-link" href="/">← Back to store</a></header>
+<main class="customer-dashboard">
+  <section class="customer-hero"><div><p class="eyebrow">CUSTOMER INSIGHTS</p><h1>People make<br><span>the marketplace.</span></h1><p>View registered shoppers, see who has ordered, and welcome new customers by name.</p><button class="primary" onclick="document.getElementById('register-panel').scrollIntoView({behavior:'smooth'})">+ Register customer</button></div><div class="customer-hero-icon">👥</div></section>
+  <section class="customer-stats" id="customer-stats"><article><span>Registered customers</span><strong id="total-customers">—</strong><small>Saved in MongoDB</small></article><article><span>Customers with orders</span><strong id="ordered-customers">—</strong><small>Unique customers who purchased</small></article><article><span>Orders placed</span><strong id="total-orders">—</strong><small>Across all customer accounts</small></article></section>
+  <section class="customer-content-grid"><div class="customer-panel"><div class="panel-heading"><div><p class="eyebrow">DIRECTORY</p><h2>Customer directory</h2></div><button class="secondary" onclick="loadCustomers()">↻ Refresh</button></div><input id="customer-search" class="customer-search" placeholder="Search by customer name or ID..."><div id="customer-list"><div class="empty">Loading customer list…</div></div></div>
+  <aside class="customer-panel register-panel" id="register-panel"><p class="eyebrow">JOIN THE STORE</p><h2>Create customer profile</h2><p class="muted">Enter a real display name instead of using generic labels like Customer 1.</p><form id="register-form"><label for="new-name">Customer name</label><input id="new-name" minlength="2" maxlength="60" placeholder="e.g. Dilnasha M." required><label for="new-family-code">Family group code (optional)</label><input id="new-family-code" maxlength="24" placeholder="e.g. SHARMA-HOME"><button class="primary" type="submit">Create profile</button></form><div id="register-message" class="form-message"></div><div class="privacy-note">🔐 This demo stores customer names and generated customer IDs locally in your MongoDB database. Do not enter sensitive personal information.</div></aside></section>
+  <section class="customer-panel"><div class="panel-heading"><div><p class="eyebrow">HOW THIS PAGE WORKS</p><h2>Customer data at a glance</h2></div></div><div class="customer-explain"><div><b>01 · Registration</b><p>A customer enters their name and receives a unique customer ID.</p></div><div><b>02 · Persistence</b><p>MongoDB stores the customer profile so it remains after restarting the app.</p></div><div><b>03 · Activity</b><p>The dashboard counts orders by unique customer ID; registered does not automatically mean active.</p></div></div></section>
+</main><div id="toast"></div><script src="customers.js"></script>
+</body></html>

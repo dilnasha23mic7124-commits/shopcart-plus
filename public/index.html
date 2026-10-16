@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopCart • Redis Shopping</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Shop<span>Cart</span></div>
+  <button id="theme-toggle" class="secondary compact" type="button" aria-label="Toggle color theme">🌙 Dark mode</button>
+  <label class="language-picker"><span>Language</span><select id="language-select" aria-label="Choose language"><option value="en-IN">English (India)</option><option value="en-GB">English (UK)</option><option value="ml">മലയാളം</option><option value="hi">हिन्दी</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option></select></label>
+  <div class="search"><input id="search" placeholder="Search products..." data-translate-placeholder="search products"> 🔎</div>
+  <div class="customer-box">
+    <label>Shopping as</label>
+    <select id="customer"></select>
+    <button class="secondary compact" onclick="openCustomerModal()">+ Add name</button>
+    <a class="nav-link" href="#departments" data-translate="departments">Departments</a>
+    <a class="nav-link" href="recommendations.html">Graph picks ↗</a>
+    <a class="nav-link" href="customers.html" data-translate="customers">Customers ↗</a>
+    <a class="nav-link" href="dashboard.html">Project dashboard ↗</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <p class="eyebrow">REDIS POWERED SHOPPING</p>
+    <h1>Everything you need,<br><span>in one smart cart.</span></h1>
+    <p class="hero-text">Discover 24+ picks across tech, fashion, home, fitness and more. Your cart updates instantly, and every order is saved for your account.</p>
+    <button class="primary" data-translate="shop now" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop now →</button>
+  </div>
+  <div class="hero-card">
+    <div class="hero-icon">🛒</div>
+    <h3>Fast cart storage</h3>
+    <p>Redis String storage with automatic 30-minute cart expiry.</p>
+    <div class="redis-pill">● Redis cart • MongoDB orders • Neo4j recommendations</div>
+  </div>
+</section>
+
+<section id="festival-portal" class="festival-portal" aria-live="polite"><div class="festival-icon">🎉</div><div><p class="eyebrow">FESTIVAL SPOTLIGHT</p><h2 id="festival-title">Seasonal savings are here</h2><p id="festival-copy">Celebrate with special shopping offers.</p></div><div class="festival-code"><span>Use code</span><strong id="festival-coupon">FESTIVE15</strong></div></section>
+<main>
+  <div id="departments" class="department-strip">
+    <button class="department active" data-dept="All">✨ All picks</button>
+    <button class="department" data-dept="Women">👗 Women</button>
+    <button class="department" data-dept="Men">👔 Men</button>
+    <button class="department" data-dept="Kids">🧸 Kids</button>
+    <button class="department" data-dept="Fitness">🏋️ Fitness</button>
+    <button class="department" data-dept="Audio">🎧 Audio</button>
+    <button class="department" data-dept="Lifestyle">🏡 Lifestyle</button>
+  </div>
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">STORE</p>
+      <h2 data-translate="explore the collection">Explore the collection</h2>
+    </div>
+    <div class="filters">
+      <button class="filter active" data-cat="All">All</button>
+      <button class="filter" data-cat="Electronics">Electronics</button>
+      <button class="filter" data-cat="Accessories">Accessories</button>
+      <button class="filter" data-cat="Audio">Audio</button>
+      <button class="filter" data-cat="Wearables">Wearables</button>
+      <button class="filter" data-cat="Home">Home</button>
+      <button class="filter" data-cat="Fashion">Fashion</button>
+      <button class="filter" data-cat="Fitness">Fitness</button>
+      <button class="filter" data-cat="Beauty">Beauty</button>
+      <button class="filter" data-cat="Gaming">Gaming</button>
+      <button class="filter" data-cat="Lifestyle">Lifestyle</button>
+      <button class="filter" data-cat="Stationery">Stationery</button>
+    </div>
+  </div>
+
+  <div id="products" class="product-grid"></div>
+
+  <section class="recommend-section">
+    <div class="section-head">
+      <div><p class="eyebrow">NEO4J GRAPH FEATURE</p><h2 data-translate="recommended for you">Recommended for you</h2></div>
+      <div class="recommend-controls">
+        <select id="recommend-product" aria-label="Choose a product for recommendations"></select>
+        <button class="secondary" onclick="loadRecommendations()">Find similar products</button>
+      </div>
+    </div>
+    <p id="recommend-status" class="muted">Choose a product to discover similar items.</p>
+    <div id="recommendations" class="recommend-grid"></div>
+  </section>
+
+  <section class="cart-section">
+    <div class="cart-head">
+      <div>
+        <p class="eyebrow">YOUR CART</p>
+        <h2 id="cart-title" data-translate="your cart">Rahul's Cart</h2>
+      </div>
+      <div class="ttl" id="ttl">Expires in 30:00</div>
+    </div>
+
+    <div class="cart-layout">
+      <div class="cart-panel">
+        <div class="reward-card">
+          <div class="reward-top"><span>🚚 Your cart rewards</span><strong id="reward-label">Free shipping at ₹1,000</strong></div>
+          <div class="progress-track"><div id="reward-progress" class="progress-fill"></div><span class="truck">🚚</span></div>
+          <p id="reward-message">Add ₹1,000 more to unlock free shipping.</p>
+          <div class="tier-row"><span id="tier-shipping">○ Free shipping · ₹1,000</span><span id="tier-gift">○ 10% off + free sample · ₹2,000</span></div>
+        </div>
+        <div id="cart-items"></div>
+        <div class="cart-actions">
+          <button class="danger" onclick="clearCart()">Clear cart</button>
+          <button class="secondary" onclick="loadCart()">↻ Refresh</button>
+        </div>
+      </div>
+      <aside class="summary">
+        <h3 data-translate="order summary">Order summary</h3>
+        <div class="line"><span>Subtotal</span><b id="subtotal">₹0</b></div>
+        <div class="line"><span>Delivery</span><b id="delivery">₹79</b></div>
+        <div class="line"><span>Discount</span><b id="discount">₹0</b></div>
+        <hr>
+        <div class="total"><span>Total</span><strong id="total">₹0</strong></div>
+        <div class="checkout-options">
+          <label for="payment-method" data-translate="payment method">Payment method</label>
+          <select id="payment-method"><option value="GPay / UPI (demo)">Google Pay / UPI (demo)</option><option value="Credit / Debit card (demo)">Credit / Debit card (demo)</option><option value="Cash on delivery">Cash on delivery</option></select>
+          <p class="tiny-note">Demo checkout only: no money is charged and no card details are collected.</p>
+          <label for="coupon-code" data-translate="coupon code">Coupon code</label><div class="coupon-row"><input id="coupon-code" maxlength="24" placeholder="e.g. SAVE100"><button class="secondary" type="button" onclick="previewCoupon()">Apply</button></div><p id="coupon-message" class="tiny-note">Try WELCOME50, SAVE100, SAVE10 or FESTIVE15.</p>
+          <label for="family-code" data-translate="family group code">Family group code (optional)</label><input id="family-code" placeholder="Same code for 2 family members" disabled><p id="family-message" class="tiny-note">Set a family code when creating each customer profile. Two profiles with the same code qualify for an extra 5% off ₹1,000+ orders.</p>
+        </div>
+        <button class="checkout" onclick="checkout()" data-translate="place order">Place order</button>
+        <p class="secure">🔒 Demo checkout · free shipping at ₹1,000</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="orders-section wishlist-section">
+    <div class="section-head"><div><p class="eyebrow">SAVED FOR LATER</p><h2 data-translate="your wishlist">Your wishlist</h2></div><span class="muted">Sale alerts show when a saved product has a listed price drop.</span></div>
+    <div id="wishlist" class="wishlist-grid"></div>
+  </section>
+
+
+  <section class="orders-section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">HISTORY</p>
+        <h2 data-translate="recent orders">Recent orders</h2>
+      </div>
+    </div>
+    <div id="orders"></div>
+  </section>
+</main>
+
+<div id="success-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="success-title">
+  <div class="modal-card success-card"><div class="success-check">✓</div><div id="confetti" aria-hidden="true"></div><p class="eyebrow">ORDER CONFIRMED</p><h2 id="success-title">Thank you for shopping with us!</h2><p class="muted">Your order has been placed successfully.</p><p id="success-order" class="order-id"></p><button class="primary" onclick="closeSuccess()">Continue shopping →</button></div>
+</div>
+<div id="customer-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="customer-modal-title">
+  <form id="customer-form" class="modal-card">
+    <button type="button" class="modal-close" onclick="closeCustomerModal()" aria-label="Close">×</button>
+    <p class="eyebrow">NEW SHOPPER</p><h2 id="customer-modal-title">What should we call you?</h2>
+    <p class="muted">Your name will be saved in the customer database.</p>
+    <label for="customer-name">Full name</label><input id="customer-name" maxlength="60" minlength="2" placeholder="e.g. Dilnasha M." required>
+    <label for="new-family-code">Family group code (optional)</label><input id="new-family-code" maxlength="24" placeholder="e.g. SHARMA-HOME"><p class="tiny-note">Two customer profiles using the same code can receive the family discount. This demo does not verify legal family relationships.</p>
+    <button class="primary" type="submit">Continue shopping</button>
+  </form>
+</div>
+<div id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
