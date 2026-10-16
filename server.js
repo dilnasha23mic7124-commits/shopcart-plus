@@ -18,7 +18,13 @@ const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || "";
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
-const redis = createClient({ url: REDIS_URL });
+const redis = createClient({
+  url: REDIS_URL,
+  socket: {
+    tls: REDIS_URL.startsWith("rediss://") ||
+         REDIS_URL.includes("upstash.io")
+  }
+});
 redis.on("error", err => console.error("Redis error:", err.message));
 const mongoClient = new MongoClient(MONGODB_URI);
 let db, ordersCollection, productsCollection, monetConn = null, monetReady = false;
